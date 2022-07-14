@@ -442,15 +442,27 @@ final_output = final_model(
 final_prob = list(final_output.data.numpy())
 final_predictions = np.argmax(final_prob, axis=1)
 
+stacked = np.concatenate((y_val, y_val, y_val, y_val, y_val, y_val, y_val))
+stacked = torch.tensor(stacked)
+
 fused_preds = []
-for test in range(100):
+for test in tqdm(range(100)):
     preds = []
     for add in range(0, 600, 100):
-        preds.append(final_output[test + add].detach().numpy())
-    if sum(preds) > 3:
+        preds.append(final_predictions[test + add])
+    if sum(preds) > 2:
         fused_preds.append(float(1))
     else:
         fused_preds.append(float(0))
 
 final_accuracy = accuracy_score(y_val, fused_preds) * 100
-print(final_accuracy)
+
+final_loss = criterion(final_output, stacked)
+
+print(
+    'final accuracy: ', 
+    final_accuracy,
+    '\t',
+    'final loss: ', 
+    final_loss.data.numpy()
+)
