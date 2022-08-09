@@ -122,7 +122,7 @@ for i in tqdm(range(num_folds)):
         for channel in range(len(channels)):
             loading = sio.loadmat(j[channel])
             mtx = loading['icoh_val']
-            np.fill_diagonal(mtx, 1)
+            np.fill_diagonal(mtx, 0)
             mtx = np.pad(mtx, 5, mode='constant')
             mtx = mtx.reshape((1, len(mtx[0]), len(mtx[1])))
             train_data[i][channel] = np.vstack([train_data[i][channel], mtx]) if train_data[i][channel].size else mtx
